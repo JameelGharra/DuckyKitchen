@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour { 
+public class Player : MonoBehaviour {
+    private Vector3 lastinteractDirection;
+    private ClearCounter selectedCounter;
     [SerializeField] private float moveSpeed = 20f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private float playerHeight = 2f;
     [SerializeField] private float playerRadius = 0.57f;
+    [SerializeField] private float maxInteractionRange = 2f;
+    [SerializeField] private LayerMask counterLayerMask;
 
     private bool isWalking;
 
@@ -35,19 +39,54 @@ public class Player : MonoBehaviour {
 
         return Vector3.zero;
     }
-
-    private void Update() {
+    private void HandleMovement() {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 intendedDirection = new(inputVector.x, 0f, inputVector.y);
 
         float moveDistance = moveSpeed * Time.deltaTime;
         Vector3 moveDirection = getValidMoveDirection(intendedDirection, moveDistance);
-        if (moveDirection != Vector3.zero) {
+        isWalking = moveDirection != Vector3.zero;
+        if (isWalking) {
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
         }
-        isWalking = moveDirection != Vector3.zero;
         float rotateSpeed = 10f;
-        transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime*rotateSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
+    }
+    private void HandleInteractions() {
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
+        RaycastHit hitObject;
+        if (moveDirection != Vector3.zero) {
+            lastinteractDirection = moveDirection;
+        }
+        if (Physics.Raycast(transform.position, lastinteractDirection, out hitObject, maxInteractionRange, counterLayerMask)) {
+            if (hitObject.transform.TryGetComponent(out ClearCounter clearCounter)) {
+                if(clearCounter != selectedCounter) {
+                    selectedCounter = clearCounter;
+                }
+            }
+            else {
+                selectedCounter = null;
+            }
+        }
+        else {
+            selectedCounter = null;
+        }
+        Debug.Log(selectedCounter);
+    }
+    private void GameInput_OnInteractAction(object sender, EventArgs e) {
+        if(selectedCounter != null) {
+            selectedCounter.Interact();
+        }
+    }
+    private void Start() {
+        gameInput.OnInteractAction += GameInput_OnInteractAction; 
+    }
+
+
+    private void Update() {
+        HandleMovement();
+        HandleInteractions();
     }
     public bool IsWalking() {
         return isWalking;
