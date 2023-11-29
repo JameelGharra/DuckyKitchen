@@ -25,11 +25,11 @@ public class Player : MonoBehaviour {
             return moveDirection;
         }
         // Attempt to move towards either X or Z if we cannot move on 
-        Vector3 moveDirX = new Vector3(moveDirection.x, 0, 0);
+        Vector3 moveDirX = new Vector3(moveDirection.x, 0, 0).normalized; // we normalize to keep eliminate speed cuts we did earlier
         if (IsValidMoveDirection(moveDirX, moveDistance))
             return moveDirX;
         // Attempt only Z movement
-        Vector3 moveDirZ = new Vector3(0, 0, moveDirection.z);
+        Vector3 moveDirZ = new Vector3(0, 0, moveDirection.z).normalized;
         if (IsValidMoveDirection(moveDirZ, moveDistance))
             return moveDirZ;
 
