@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 7279679912058550060, guid: 694c413b624995d47be516ea65bbd26f, type: 3}
   sprite: {fileID: 21300000, guid: da2d04fe27b94e34ea0b624569b48a6f, type: 3}
-  name: Cheese Block
+  objectName: Cheese Block

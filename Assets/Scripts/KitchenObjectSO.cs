@@ -7,5 +7,5 @@ public class KitchenObjectSO : ScriptableObject {
     public Transform prefab;
     // Icon sprite
     public Sprite sprite;
-    public string name;
+    public string objectName;
 }
