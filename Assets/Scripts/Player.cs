@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
@@ -14,6 +15,16 @@ public class Player : MonoBehaviour {
     [SerializeField] private LayerMask counterLayerMask;
 
     private bool isWalking;
+
+    // Singleton pattern
+
+    public static Player Instance { get; private set; } // property
+
+    // Selecting counter event
+    public event EventHandler<OnSelectedCounterChangedEventArgs> onSelectedCounterChange;
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter;
+    }
 
     private bool IsValidMoveDirection(Vector3 moveDirection, float moveDistance) {
         // Capsule cast requires the top and the bottom of the virtual capsule fired
@@ -52,6 +63,12 @@ public class Player : MonoBehaviour {
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
     }
+    private void SetSelectedCounter(ClearCounter selectedCounter) {
+        this.selectedCounter = selectedCounter;
+        onSelectedCounterChange?.Invoke(this, new OnSelectedCounterChangedEventArgs {
+            selectedCounter = selectedCounter
+        });
+    }
     private void HandleInteractions() {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
@@ -62,22 +79,27 @@ public class Player : MonoBehaviour {
         if (Physics.Raycast(transform.position, lastinteractDirection, out hitObject, maxInteractionRange, counterLayerMask)) {
             if (hitObject.transform.TryGetComponent(out ClearCounter clearCounter)) {
                 if(clearCounter != selectedCounter) {
-                    selectedCounter = clearCounter;
+                    SetSelectedCounter(clearCounter);
                 }
             }
             else {
-                selectedCounter = null;
+                SetSelectedCounter(null);
             }
         }
         else {
-            selectedCounter = null;
+            SetSelectedCounter(null);
         }
-        Debug.Log(selectedCounter);
     }
     private void GameInput_OnInteractAction(object sender, EventArgs e) {
         if(selectedCounter != null) {
             selectedCounter.Interact();
         }
+    }
+    private void Awake() {
+        if(Instance != null) { // Not supposed to happen either way
+            Debug.LogError("There is more than one player instance");
+        }
+        Instance = this;
     }
     private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteractAction; 

@@ -2,17 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class SelectedCounterVisual : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    [SerializeField] private ClearCounter clearCounter;
+    [SerializeField] private GameObject visualGameObject;
+    // If set to Awake instead, there is a chance that we have a null ref. exception
+    private void Start() {
+        Player.Instance.onSelectedCounterChange += Player_OnSelectedCounterChanged;
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e) {
+        if(e.selectedCounter == clearCounter) {
+            Show();
+        }
+        else {
+            Hide();
+        }
+    }
+    private void Show() {
+        visualGameObject.SetActive(true);
+    }
+    private void Hide() {
+        visualGameObject.SetActive(false);
     }
 }
