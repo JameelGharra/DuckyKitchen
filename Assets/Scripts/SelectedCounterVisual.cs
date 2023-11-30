@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class SelectedCounterVisual : MonoBehaviour
 {
-    [SerializeField] private ClearCounter clearCounter;
-    [SerializeField] private GameObject visualGameObject;
+    [SerializeField] private BaseCounter counter;
+    [SerializeField] private GameObject[] visualGameObjectArray;
     // If set to Awake instead, there is a chance that we have a null ref. exception
     private void Start() {
         Player.Instance.onSelectedCounterChange += Player_OnSelectedCounterChanged;
     }
     private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e) {
-        if(e.selectedCounter == clearCounter) {
+        if(e.selectedCounter == counter) {
             Show();
         }
         else {
@@ -19,9 +19,13 @@ public class SelectedCounterVisual : MonoBehaviour
         }
     }
     private void Show() {
-        visualGameObject.SetActive(true);
+        foreach (GameObject gameObject in visualGameObjectArray) {
+            gameObject.SetActive(true);
+        }
     }
     private void Hide() {
-        visualGameObject.SetActive(false);
+        foreach (GameObject gameObject in visualGameObjectArray) {
+            gameObject.SetActive(false);
+        }
     }
 }
