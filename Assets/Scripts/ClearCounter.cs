@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ClearCounter : MonoBehaviour
@@ -11,5 +12,6 @@ public class ClearCounter : MonoBehaviour
         Debug.Log("Interact!");
         Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab, counterTopPoint);
         kitchenObjectTransform.localPosition = Vector3.zero; // putting it exactly on top point
+        Debug.Log(kitchenObjectTransform.GetComponent<KitchenObject>().GetKitchenObjectSO().name);
     }
 }
