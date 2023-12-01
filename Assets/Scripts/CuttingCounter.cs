@@ -16,7 +16,8 @@ public class CuttingCounter : BaseCounter {
     }
 
     public override void Interact(Player player) {
-        if (!HasKitchenObject() && player.HasKitchenObject()) {
+        if (!HasKitchenObject() && player.HasKitchenObject() && 
+            GetSlicedKitchenObjectSO(player.GetKitchenObject().GetKitchenObjectSO()) != null) {
             player.GetKitchenObject().SetKitchenObjectParent(this);
         }
         else if (HasKitchenObject() && !player.HasKitchenObject()) {
@@ -24,7 +25,7 @@ public class CuttingCounter : BaseCounter {
         }
     }
     public override void InteractAlternate(Player player) {
-        if(HasKitchenObject()) {
+        if(HasKitchenObject() && GetSlicedKitchenObjectSO(GetKitchenObject().GetKitchenObjectSO()) != null) {
             KitchenObjectSO slicedKitchenObject = GetSlicedKitchenObjectSO(GetKitchenObject().GetKitchenObjectSO());
             GetKitchenObject().Destroy();
             KitchenObject.SpawnKitchenObject(slicedKitchenObject, this);
