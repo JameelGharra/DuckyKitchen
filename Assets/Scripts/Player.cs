@@ -44,11 +44,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         }
         // Attempt to move towards either X or Z if we cannot move on 
         Vector3 moveDirX = new Vector3(moveDirection.x, 0, 0).normalized; // we normalize to keep eliminate speed cuts we did earlier
-        if (IsValidMoveDirection(moveDirX, moveDistance))
+        if (moveDirection.x != 0 && IsValidMoveDirection(moveDirX, moveDistance))
             return moveDirX;
         // Attempt only Z movement
         Vector3 moveDirZ = new Vector3(0, 0, moveDirection.z).normalized;
-        if (IsValidMoveDirection(moveDirZ, moveDistance))
+        if (moveDirection.z != 0 && IsValidMoveDirection(moveDirZ, moveDistance))
             return moveDirZ;
 
         return Vector3.zero;
