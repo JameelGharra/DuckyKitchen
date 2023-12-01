@@ -98,6 +98,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
             selectedCounter.Interact(this);
         }
     }
+    private void GameInput_OnInteractAlternateAction(object sender, EventArgs e) {
+        if (selectedCounter != null) {
+            selectedCounter.InteractAlternate(this);
+        }
+    }
     private void Awake() {
         if(Instance != null) { // Not supposed to happen either way
             Debug.LogError("There is more than one player instance");
@@ -105,7 +110,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         Instance = this;
     }
     private void Start() {
-        gameInput.OnInteractAction += GameInput_OnInteractAction; 
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
 
