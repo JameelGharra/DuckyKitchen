@@ -41,6 +41,11 @@ public class CuttingCounter : BaseCounter, IProgressable {
         else if (HasKitchenObject() && !player.HasKitchenObject()) {
             GetKitchenObject().SetKitchenObjectParent(player);
         }
+        else if (HasKitchenObject() && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+            // the counter is full and the player is carrying a plate
+            if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                GetKitchenObject().Destroy();
+        }
     }
     public override void InteractAlternate(Player player) {
         if (HasKitchenObject() && GetSlicedKitchenObjectSO(GetKitchenObject().GetKitchenObjectSO()) != null) {

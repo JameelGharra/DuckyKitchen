@@ -25,6 +25,14 @@ public class KitchenObject : MonoBehaviour
         transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
         transform.localPosition = Vector3.zero;
     }
+    public bool TryGetPlate(out PlateKitchenObject plateKitchenObject) {
+        if (this is PlateKitchenObject) {
+            plateKitchenObject = this as PlateKitchenObject;
+            return true;
+        }
+        plateKitchenObject = null;
+        return false;
+    }
     public void Destroy() {
         kitchenObjectParent.ClearKitchenObject();
         Destroy(this.gameObject);
