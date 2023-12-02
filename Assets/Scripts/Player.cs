@@ -19,8 +19,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     private KitchenObject kitchenObject;
 
-    // Singleton pattern
-
+    // Singleton 
     public static Player Instance { get; private set; } // property
 
     // Selecting counter event
