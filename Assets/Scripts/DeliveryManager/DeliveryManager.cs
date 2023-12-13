@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ public class DeliveryManager : MonoBehaviour {
 
     public static DeliveryManager Instance { get; private set; }
 
+    public event EventHandler OnRecipeSpawned;
+    public event EventHandler OnRecipeCompleted;
+
     private void Awake() {
         Instance = this;
         waitingRecipeSOList = new List<RecipeSO>();
@@ -21,15 +25,12 @@ public class DeliveryManager : MonoBehaviour {
             spawnRecipeTimer = spawnRecipeTimerMax;
         }
         if(waitingRecipeSOList.Count < MAX_WAITING_RECIPE) {
-            RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[Random.Range(0, recipeListSO.recipeSOList.Count)];
-            Debug.Log(waitingRecipeSO.recipeName);
+            RecipeSO waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
             waitingRecipeSOList.Add(waitingRecipeSO);
+            OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
         }
     }
     public void DeliverRecipe(PlateKitchenObject plateKitchenObject) {
-        foreach(KitchenObjectSO kitchenObject in plateKitchenObject.GetKitchenObjectSOList()) {
-            Debug.Log(kitchenObject.objectName);
-        }
         for(int i = 0; i < waitingRecipeSOList.Count; ++i) {
             RecipeSO waitingRecipeSO = waitingRecipeSOList[i];
             if(waitingRecipeSO.kitchenObjectSOList.Count == plateKitchenObject.GetKitchenObjectSOList().Count) {
@@ -49,12 +50,14 @@ public class DeliveryManager : MonoBehaviour {
                 }
                 if(plateContentsMatchesRecipe) {
                     // The player delivered the correct recipe
-                    Debug.Log("This is a valid recipe delivery");
                     waitingRecipeSOList.RemoveAt(i);
+                    OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
                     return;
                 }
             }
         }
-        Debug.Log("Incorrect recipe delivery");
+    }
+    public List<RecipeSO> GetWaitingRecipeSOList() {  
+        return waitingRecipeSOList; 
     }
 }
