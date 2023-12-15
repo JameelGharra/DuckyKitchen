@@ -11,6 +11,8 @@ public class CuttingCounter : BaseCounter, IProgressable {
 
     public event EventHandler<IProgressable.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
+    // for sounds
+    public static event EventHandler OnAnyCut;
     public class OnProgressChangedEventArgs : EventArgs {
         public float progressNormalized;
     }
@@ -53,6 +55,7 @@ public class CuttingCounter : BaseCounter, IProgressable {
 
             CuttingRecipeSO cuttingRecipe = GetCuttingRecipseSOFromInput(GetKitchenObject().GetKitchenObjectSO());
             OnCut?.Invoke(this, EventArgs.Empty);
+            OnAnyCut?.Invoke(this, EventArgs.Empty);
             OnProgressChanged?.Invoke(this, new IProgressable.OnProgressChangedEventArgs {
                 progressNormalized = (float)cuttingProgress / cuttingRecipe.cuttingProgressMax
             });
